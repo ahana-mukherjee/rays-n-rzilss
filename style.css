@@ -60,7 +60,8 @@
 }
 
 html {
-  scroll-behavior: smooth
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%
 }
 
 body {
@@ -69,7 +70,9 @@ body {
   color: var(--text);
   line-height: 1.7;
   overflow-x: hidden;
-  transition: background var(--tr), color var(--tr)
+  transition: background var(--tr), color var(--tr);
+  word-break: break-word;
+  overflow-wrap: break-word
 }
 
 a {
@@ -83,19 +86,23 @@ ul {
 
 img {
   max-width: 100%;
-  display: block
+  display: block;
+  height: auto
 }
 
 textarea,
 input,
 select {
-  font-family: var(--font-b)
+  font-family: var(--font-b);
+  max-width: 100%
 }
 
 .container {
   width: 90%;
   max-width: 1200px;
-  margin: 0 auto
+  margin: 0 auto;
+  padding-left: max(0px, env(safe-area-inset-left));
+  padding-right: max(0px, env(safe-area-inset-right))
 }
 
 .section {
@@ -322,7 +329,7 @@ select {
 }
 
 .logo-img {
-  height: 80px;
+  height: 75px;
   width: auto;
   border-radius: 8px;
   object-fit: contain
@@ -509,17 +516,27 @@ select {
   }
 }
 
-.hero-content {
+/* Two-column inner */
+.hero-inner {
   position: relative;
   z-index: 2;
-  max-width: 750px
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start
 }
 
 .hero-badge {
   display: inline-flex;
   align-items: center;
   gap: .6rem;
-  font-size: .8rem;
+  font-size: .78rem;
   font-weight: 600;
   letter-spacing: .1em;
   text-transform: uppercase;
@@ -543,6 +560,7 @@ select {
   border-radius: 50%;
   box-shadow: 0 0 0 3px rgba(34, 197, 94, .3);
   animation: pulse 2s infinite;
+  flex-shrink: 0;
 }
 
 @keyframes pulse {
@@ -559,19 +577,19 @@ select {
 
 .hero-title {
   font-family: var(--font-d);
-  font-size: clamp(3rem, 6.5vw, 5.2rem);
+  font-size: clamp(2.6rem, 4vw, 4.5rem);
   font-weight: 900;
   line-height: 1.1;
-  margin-bottom: 1.6rem;
+  margin-bottom: 1.4rem;
   color: var(--text);
 }
 
 .hero-sub {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: var(--text-2);
-  max-width: 560px;
-  margin-bottom: 2.5rem;
-  line-height: 1.85
+  max-width: 480px;
+  margin-bottom: 2.2rem;
+  line-height: 1.85;
 }
 
 .hero-sub strong {
@@ -581,53 +599,85 @@ select {
 .hero-actions {
   display: flex;
   gap: 1rem;
-  flex-wrap: wrap;
-  margin-bottom: 3.5rem
-}
-
-.hero-stats {
-  display: flex;
-  align-items: center;
-  gap: 1.8rem;
   flex-wrap: wrap
 }
 
-.hstat {
+/* Right: stat cards 2×2 grid */
+.hero-right {
   display: flex;
-  flex-direction: column
+  align-items: center;
+  justify-content: center
 }
 
-.hstat-n {
+.hero-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  width: 100%;
+  max-width: 420px;
+}
+
+.hcard {
+  border-radius: var(--r);
+  padding: 1.6rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  transition: transform var(--tr), box-shadow var(--tr);
+}
+
+.hcard:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg)
+}
+
+.hcard--blue {
+  background: linear-gradient(135deg, var(--brand-blue), var(--brand-blue-2));
+  color: #fff
+}
+
+.hcard--red {
+  background: linear-gradient(135deg, var(--accent-red-2), var(--accent-red));
+  color: #fff
+}
+
+.hcard--dark {
+  background: var(--text);
+  color: var(--bg)
+}
+
+[data-theme="dark"] .hcard--dark {
+  background: var(--surf);
+  color: var(--text);
+  border: 1px solid var(--border)
+}
+
+.hcard--gold {
+  background: linear-gradient(135deg, #b8780a, var(--accent-yellow));
+  color: #1a1200
+}
+
+.hcard-n {
   font-family: var(--font-d);
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 900;
-  color: var(--brand-blue-2);
   line-height: 1;
 }
 
-[data-theme="dark"] .hstat-n {
-  color: #6a88f5
-}
-
-.hstat-s {
-  font-size: 1.5rem;
+.hcard-s {
+  font-size: 1.6rem;
   font-weight: 900;
-  color: var(--accent-red);
   display: inline
 }
 
-.hstat-l {
+.hcard-l {
   font-size: .72rem;
-  color: var(--muted);
+  font-weight: 600;
   letter-spacing: .08em;
   text-transform: uppercase;
-  margin-top: .2rem
-}
-
-.hstat-div {
-  width: 1px;
-  height: 44px;
-  background: var(--border)
+  opacity: .8;
+  margin-top: .15rem;
+  line-height: 1.4
 }
 
 .hero-scroll-cue {
@@ -732,7 +782,10 @@ select {
 
 .about-visual {
   position: relative;
-  height: 400px
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center
 }
 
 .av-card {
@@ -1812,12 +1865,47 @@ select {
 }
 
 .faq-ai {
-  padding: 0 1.4rem 1.4rem;
-  padding-top: 1rem;
+  padding: 1rem 1.4rem 1.4rem;
   font-size: .87rem;
   color: var(--text-2);
   line-height: 1.85;
   border-top: 1px solid var(--border);
+}
+
+display:flex;
+flex-direction:column;
+gap:.75rem;
+margin-top:1.5rem;
+width:100%;
+}
+
+.faq-btn {
+  width: 100%;
+  justify-content: center;
+  padding: .8rem 1.2rem !important;
+  font-size: .9rem !important;
+  border-radius: 10px !important;
+}
+
+.btn-wa-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  background: #25D366;
+  color: #fff;
+  border: 2px solid transparent;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: .95rem;
+  cursor: pointer;
+  transition: all var(--tr);
+}
+
+.btn-wa-outline:hover {
+  background: #1ebe5d;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, .4)
 }
 
 /* ══════════════════════════════════════════════════
@@ -2005,7 +2093,7 @@ a.ct-item:hover {
 }
 
 .footer-logo {
-  height: 70px;
+  height: 48px;
   width: auto;
   border-radius: 8px
 }
@@ -2054,7 +2142,7 @@ a.ct-item:hover {
   position: fixed;
   bottom: 2rem;
   left: 50%;
-  transform: translateX(-50%) translateY(100px);
+  transform: translateX(-50%) translateY(calc(100% + 4rem));
   background: var(--brand-blue);
   color: #fff;
   padding: .9rem 2rem;
@@ -2065,54 +2153,161 @@ a.ct-item:hover {
   transition: transform .45s cubic-bezier(.34, 1.56, .64, 1);
   z-index: 9999;
   white-space: nowrap;
+  pointer-events: none;
 }
 
 .toast.show {
-  transform: translateX(-50%) translateY(0)
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto
 }
 
 /* ══════════════════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — Full 5-breakpoint system
+   1. ≥1400px   Wide desktops
+   2. 1200–1399 Standard desktops / large laptops
+   3. 1024–1199 Small laptops / landscape tablets
+   4.  768–1023 Portrait tablets / phablets
+   5.  480–767  Large phones
+   6.  320–479  Small phones
 ══════════════════════════════════════════════════ */
-@media(max-width:1100px) {
 
-  .about-grid,
-  .placement-grid,
-  .contact-grid,
-  .faq-layout {
-    grid-template-columns: 1fr;
-    gap: 3rem
+/* ── 1. WIDE DESKTOPS (1400px+) ────────────────── */
+@media (min-width:1400px) {
+  .container {
+    max-width: 1320px
   }
 
-  .faq-cta {
-    position: static
+  .hero-title {
+    font-size: 5.8rem
   }
 
-  .footer-grid {
-    grid-template-columns: 1fr 1fr
+  .sec-title {
+    font-size: 3.2rem
   }
 
-  .footer-brand {
-    grid-column: 1/-1
+  .modules-grid {
+    grid-template-columns: repeat(3, 1fr)
+  }
+
+  .testi-grid {
+    grid-template-columns: repeat(3, 1fr)
+  }
+
+  .why-grid {
+    grid-template-columns: repeat(3, 1fr)
   }
 }
 
-@media(max-width:900px) {
-  :root {
-    --sp: 70px 0
+/* ── 2. STANDARD DESKTOPS (1200–1399px) ─────────── */
+@media (max-width:1399px) and (min-width:1200px) {
+  .container {
+    max-width: 1140px
   }
 
-  .modules-grid,
-  .testi-grid,
+  .nav-links {
+    gap: 1.4rem
+  }
+
+  .nav-link {
+    font-size: .85rem
+  }
+}
+
+/* ── 3. SMALL LAPTOPS / LANDSCAPE TABLETS (1024–1199px) */
+@media (max-width:1199px) and (min-width:1025px) {
+  .container {
+    width: 92%
+  }
+
+  .nav-links {
+    gap: 1.1rem
+  }
+
+  .nav-link {
+    font-size: .82rem
+  }
+
+  .btn-nav-cta,
+  .nav-cta {
+    padding: .55rem 1.1rem;
+    font-size: .82rem
+  }
+
+  /* Hero */
+  .hero-title {
+    font-size: clamp(2.8rem, 4.5vw, 4.2rem)
+  }
+
+  .hero-stats {
+    gap: 1.2rem
+  }
+
+  /* About */
+  .about-grid {
+    gap: 3rem
+  }
+
+  .about-visual {
+    height: 360px
+  }
+
+  /* Grids */
+  .modules-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.1rem
+  }
+
+  .testi-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.1rem
+  }
+
   .why-grid {
-    grid-template-columns: 1fr 1fr
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.1rem
   }
 
-  .fees-grid,
   .who-grid {
-    grid-template-columns: 1fr
+    gap: 1.4rem
   }
 
+  .fees-grid {
+    gap: 1.4rem
+  }
+
+  /* Placement */
+  .placement-grid {
+    gap: 3rem
+  }
+
+  /* Contact */
+  .contact-grid {
+    gap: 3rem
+  }
+
+  /* Footer */
+  .footer-grid {
+    grid-template-columns: 1.8fr 1fr 1.3fr;
+    gap: 2rem
+  }
+
+  /* FAQ */
+  .faq-layout {
+    gap: 2.5rem
+  }
+}
+
+/* ── 4. PORTRAIT TABLETS / PHABLETS (768–1024px) ─ */
+@media (max-width:1024px) {
+  :root {
+    --sp: 80px 0
+  }
+
+  .container {
+    width: 92%
+  }
+
+  /* ── Navbar ── */
   .nav-links {
     display: none;
     position: fixed;
@@ -2121,13 +2316,19 @@ a.ct-item:hover {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 2.5rem;
+    gap: 2rem;
     z-index: 999;
-    font-size: 1.05rem;
+    font-size: 1.1rem;
+    padding: 2rem;
   }
 
   .nav-links.open {
     display: flex
+  }
+
+  .nav-link {
+    font-size: 1.1rem;
+    padding: .4rem 0
   }
 
   .hamburger {
@@ -2139,9 +2340,186 @@ a.ct-item:hover {
     display: none
   }
 
+  /* ── Hero ── */
+  .hero {
+    padding: 110px 0 70px
+  }
+
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 2.5rem
+  }
+
+  .hero-left {
+    align-items: center;
+    text-align: center
+  }
+
+  .hero-badge {
+    align-self: center
+  }
+
+  .hero-sub {
+    max-width: 100%;
+    text-align: center
+  }
+
+  .hero-actions {
+    justify-content: center
+  }
+
+  .hero-right {
+    width: 100%
+  }
+
+  .hero-cards {
+    max-width: 100%;
+    grid-template-columns: repeat(2, 1fr)
+  }
+
+  .hcard-n {
+    font-size: 2rem
+  }
+
+  .hero-scroll-cue {
+    display: none
+  }
+
+  /* ── About ── */
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem
+  }
+
+  .about-visual {
+    height: auto;
+    min-height: auto;
+    position: static;
+    display: block;
+    padding: 1rem 0
+  }
+
+  .av-card {
+    position: static;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 420px
+  }
+
+  .av-float {
+    display: none
+  }
+
+  /* ── Who ── */
+  .who-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.4rem
+  }
+
+  /* ── Training ── */
+  .modules-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem
+  }
+
+  /* Timeline stays horizontal but compressed */
+  .timeline-wrap {
+    padding: 2rem 1.5rem
+  }
+
+  .tl-m {
+    font-size: .82rem
+  }
+
+  .tl-d {
+    font-size: .72rem
+  }
+
+  /* ── Placement ── */
+  .placement-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem
+  }
+
+  .pl-visual {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap
+  }
+
+  .pl-stats {
+    width: auto;
+    flex: 1;
+    min-width: 220px
+  }
+
+  /* ── Fees ── */
+  .fees-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.4rem
+  }
+
+  /* ── Testimonials ── */
+  .testi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem
+  }
+
+  /* ── Why Us ── */
+  .why-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.2rem
+  }
+
+  /* ── FAQ ── */
+  .faq-layout {
+    grid-template-columns: 1fr;
+    gap: 2rem
+  }
+
+  .faq-cta {
+    position: static;
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    align-items: flex-start;
+    flex-wrap: wrap
+  }
+
+  .faq-cta h3 {
+    margin-bottom: .3rem
+  }
+
+  /* ── Contact ── */
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem
+  }
+
+  /* ── Footer ── */
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1
+  }
+
+  .footer-bottom {
+    flex-direction: row
+  }
+
+  /* ── Timeline (vertical on tablet) ── */
   .timeline {
     flex-direction: column;
-    align-items: flex-start
+    align-items: flex-start;
+    gap: 0
   }
 
   .tl-line {
@@ -2149,13 +2527,15 @@ a.ct-item:hover {
     height: 28px;
     margin: 0 0 0 8px;
     align-self: auto;
-    flex: none
+    flex: none;
+    min-width: auto
   }
 
   .tl-step {
     flex-direction: row;
     gap: 1rem;
-    align-items: center
+    align-items: center;
+    width: 100%
   }
 
   .tl-dot {
@@ -2168,56 +2548,200 @@ a.ct-item:hover {
   }
 }
 
-@media(max-width:640px) {
+/* ── 5. LARGE PHONES (480–767px) ──────────────── */
+@media (max-width:767px) {
+  :root {
+    --sp: 60px 0
+  }
 
-  .modules-grid,
-  .testi-grid,
-  .why-grid,
-  .cf-row {
-    grid-template-columns: 1fr
+  .container {
+    width: 94%
+  }
+
+  /* ── Navbar ── */
+  .navbar {
+    padding: .75rem 0
+  }
+
+  .navbar.scrolled {
+    padding: .55rem 0
+  }
+
+  .logo-img {
+    height: 40px
+  }
+
+  .nav-logo-text .logo-name {
+    font-size: .95rem
+  }
+
+  .nav-logo-text .logo-tagline {
+    display: none
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 90px 0 60px;
+    min-height: auto
+  }
+
+  .hero-inner {
+    gap: 2rem
   }
 
   .hero-title {
-    font-size: 2.8rem
+    font-size: clamp(2rem, 7.5vw, 2.8rem)
   }
 
-  .hero-actions {
-    flex-direction: column
+  .hero-sub {
+    font-size: .93rem;
+    margin-bottom: 1.8rem
   }
 
-  .hero-stats {
-    gap: 1rem
-  }
-
-  .hstat-div {
-    display: none
-  }
-
-  .about-visual {
-    height: 280px
-  }
-
-  .av-card {
-    width: 220px;
-    padding: 1.8rem
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr
-  }
-
-  .footer-bottom {
-    flex-direction: column;
+  .hero-badge {
+    font-size: .7rem;
+    padding: .35rem .8rem;
     text-align: center
   }
 
-  .pl-stats {
-    flex-wrap: wrap;
+  .hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: .75rem;
+    width: 100%
+  }
+
+  .hero-actions .btn {
+    justify-content: center;
+    width: 100%
+  }
+
+  .hero-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: .75rem
+  }
+
+  .hcard {
+    padding: 1.2rem 1rem
+  }
+
+  .hcard-n {
+    font-size: 1.8rem
+  }
+
+  .hcard-s {
+    font-size: 1.2rem
+  }
+
+  .hcard-l {
+    font-size: .66rem
+  }
+
+  .hero-scroll-cue {
+    display: none
+  }
+
+  /* ── Ticker ── */
+  .ticker span {
+    font-size: .74rem
+  }
+
+  /* ── Section labels/headings ── */
+  .sec-title {
+    font-size: clamp(1.7rem, 6vw, 2.4rem)
+  }
+
+  .sec-sub {
+    font-size: .93rem
+  }
+
+  .sec-header {
+    margin-bottom: 2.5rem
+  }
+
+  /* ── About ── */
+  .about-grid {
+    gap: 2rem
+  }
+
+  .about-visual {
+    height: auto;
+    min-height: auto;
+    position: static;
+    display: block;
+    padding: .5rem 0
+  }
+
+  .av-card {
+    position: static;
+    top: auto;
+    left: auto;
+    transform: none;
+    margin: 0 auto;
+    max-width: 100%;
+    width: 100%;
+    padding: 1.8rem
+  }
+
+  .av-icon-wrap {
+    width: 52px;
+    height: 52px;
+    font-size: 1.5rem
+  }
+
+  .av-float {
+    display: none
+  }
+
+  .about-badges {
+    gap: .65rem
+  }
+
+  .ab-item {
+    font-size: .84rem
+  }
+
+  /* ── Who Can Join ── */
+  .who-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem
+  }
+
+  .who-card {
+    padding: 2rem 1.5rem
+  }
+
+  .wc-title {
+    font-size: 1.25rem
+  }
+
+  /* ── Training ── */
+  .modules-grid {
+    grid-template-columns: 1fr;
     gap: 1rem
   }
 
-  .pls-div {
-    display: none
+  .mod {
+    padding: 1.6rem
+  }
+
+  .timeline-wrap {
+    padding: 1.8rem 1.4rem
+  }
+
+  .tl-title {
+    font-size: 1.1rem;
+    margin-bottom: 1.8rem
+  }
+
+  /* ── Placement ── */
+  .placement-grid {
+    gap: 2rem
+  }
+
+  .pl-visual {
+    flex-direction: column;
+    gap: 1.5rem
   }
 
   .guarantee-card {
@@ -2226,11 +2750,462 @@ a.ct-item:hover {
   }
 
   .gc-core {
-    width: 150px;
-    height: 150px
+    width: 152px;
+    height: 152px
   }
 
   .gc-pct {
-    font-size: 2.5rem
+    font-size: 2.6rem
+  }
+
+  .gc-lbl {
+    font-size: .58rem
+  }
+
+  .pl-stats {
+    flex-direction: column;
+    gap: .8rem;
+    align-items: stretch;
+    padding: 1.2rem
+  }
+
+  .pls {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center
+  }
+
+  .pls strong {
+    font-size: 1.5rem
+  }
+
+  .pls-div {
+    width: 100%;
+    height: 1px
+  }
+
+  /* ── Fees ── */
+  .fees-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem
+  }
+
+  .fc-header {
+    padding: 1.6rem 1.5rem 1.3rem
+  }
+
+  .fc-body {
+    padding: 1.5rem
+  }
+
+  .fc-title {
+    font-size: 1.2rem
+  }
+
+  .fc-step {
+    padding: .9rem
+  }
+
+  .fc-step-num {
+    font-size: 1.7rem;
+    min-width: 44px
+  }
+
+  .fc-btn {
+    margin: 0 1.5rem 1.5rem
+  }
+
+  /* ── Testimonials ── */
+  .testi-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem
+  }
+
+  .testi {
+    padding: 1.6rem
+  }
+
+  /* ── Why Us ── */
+  .why-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem
+  }
+
+  .why-item {
+    padding: 1.8rem 1.2rem
+  }
+
+  .wi-icon {
+    font-size: 2rem
+  }
+
+  .why-item h4 {
+    font-size: .95rem
+  }
+
+  .why-item p {
+    font-size: .8rem
+  }
+
+  /* ── FAQ ── */
+  .faq-layout {
+    gap: 1.5rem
+  }
+
+  .faq-cta {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem
+  }
+
+  .faq-cta h3 {
+    font-size: 1.1rem
+  }
+
+  .faq-q {
+    font-size: .87rem;
+    padding: 1rem 1.2rem
+  }
+
+  .faq-ai {
+    padding: .9rem 1.2rem 1.2rem;
+    font-size: .84rem
+  }
+
+  /* ── Contact ── */
+  .ct-items {
+    gap: .75rem
+  }
+
+  .ct-item {
+    padding: .9rem 1rem
+  }
+
+  .cf {
+    padding: 1.8rem 1.4rem
+  }
+
+  .cf-row {
+    grid-template-columns: 1fr
+  }
+
+  .cf-head h3 {
+    font-size: 1.3rem
+  }
+
+  .cf-submit {
+    font-size: .9rem;
+    padding: .85rem
+  }
+
+  /* ── Footer ── */
+  .footer {
+    padding: 3rem 0 1.5rem
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 1.8rem
+  }
+
+  .footer-brand {
+    grid-column: auto
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: .4rem
+  }
+
+  .footer-brand p {
+    max-width: 100%
+  }
+
+  /* ── Toast ── */
+  .toast {
+    font-size: .82rem;
+    padding: .8rem 1.4rem;
+    white-space: normal;
+    text-align: center;
+    max-width: 88vw
+  }
+
+  /* ── Guarantee quote ── */
+  .guarantee-quote {
+    font-size: .95rem;
+    padding: .8rem 1rem
+  }
+
+  /* ── Who note ── */
+  .who-note {
+    flex-direction: column;
+    gap: .6rem;
+    font-size: .84rem
+  }
+
+  .fees-note {
+    flex-direction: column;
+    gap: .6rem;
+    font-size: .84rem
+  }
+}
+
+/* ── 6. SMALL PHONES (320–479px) ──────────────── */
+@media (max-width:479px) {
+  :root {
+    --sp: 50px 0
+  }
+
+  .container {
+    width: 96%
+  }
+
+  /* ── Navbar ── */
+  .logo-img {
+    height: 36px
+  }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 78px 0 45px
+  }
+
+  .hero-title {
+    font-size: clamp(1.8rem, 8.5vw, 2.4rem)
+  }
+
+  .hero-badge {
+    font-size: .65rem;
+    padding: .3rem .7rem;
+    gap: .4rem
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px
+  }
+
+  .hero-sub {
+    font-size: .88rem
+  }
+
+  .btn-lg {
+    padding: .8rem 1.4rem;
+    font-size: .9rem
+  }
+
+  .hcard {
+    padding: 1rem .9rem
+  }
+
+  .hcard-n {
+    font-size: 1.6rem
+  }
+
+  .hcard-l {
+    font-size: .62rem
+  }
+
+  /* ── Headings ── */
+  .sec-title {
+    font-size: clamp(1.5rem, 7vw, 2rem)
+  }
+
+  .sec-label {
+    font-size: .7rem;
+    padding: .3rem .75rem
+  }
+
+  /* ── About ── */
+  .av-card h3 {
+    font-size: 1rem
+  }
+
+  .av-card p {
+    font-size: .8rem
+  }
+
+  /* ── Who ── */
+  .wc-title {
+    font-size: 1.1rem
+  }
+
+  .wc-includes li {
+    font-size: .83rem
+  }
+
+  /* ── Training ── */
+  .mod h3 {
+    font-size: 1rem
+  }
+
+  .mod p {
+    font-size: .83rem
+  }
+
+  /* ── Placement ── */
+  .guarantee-card {
+    width: 160px;
+    height: 160px
+  }
+
+  .gc-core {
+    width: 134px;
+    height: 134px
+  }
+
+  .gc-pct {
+    font-size: 2.2rem
+  }
+
+  /* ── Fees ── */
+  .fc-step-num {
+    font-size: 1.5rem;
+    min-width: 38px
+  }
+
+  .fc-step-info strong {
+    font-size: .88rem
+  }
+
+  .fc-step-info p {
+    font-size: .8rem
+  }
+
+  .fmi-item strong {
+    font-size: .88rem
+  }
+
+  .fmi-item p {
+    font-size: .8rem
+  }
+
+  /* ── Why Us ── */
+  .why-grid {
+    grid-template-columns: 1fr
+  }
+
+  .why-item {
+    padding: 1.5rem 1.2rem
+  }
+
+  /* ── Testimonials ── */
+  .testi p {
+    font-size: .84rem
+  }
+
+  /* ── FAQ ── */
+  .faq-q {
+    font-size: .84rem;
+    padding: .9rem 1rem
+  }
+
+  .fq-icon {
+    font-size: 1.2rem
+  }
+
+  /* ── Contact form ── */
+  .cf {
+    padding: 1.4rem 1.1rem
+  }
+
+  .cf-g input,
+  .cf-g select,
+  .cf-g textarea {
+    font-size: .88rem;
+    padding: .7rem .85rem
+  }
+
+  .cf-g label {
+    font-size: .73rem
+  }
+
+  /* ── Footer ── */
+  .footer-col h4 {
+    font-size: .95rem
+  }
+
+  .footer-col li {
+    font-size: .82rem
+  }
+
+  .footer-bottom {
+    font-size: .73rem
+  }
+
+  /* ── Buttons ── */
+  .btn {
+    padding: .7rem 1.4rem;
+    font-size: .88rem
+  }
+
+  .btn-wa {
+    padding: .65rem 1.2rem;
+    font-size: .82rem
+  }
+
+  .btn-outline-dark {
+    padding: .7rem 1.4rem;
+    font-size: .88rem
+  }
+}
+
+/* ── TOUCH / HOVER ADJUSTMENTS ─────────────────── */
+@media (hover:none) {
+
+  /* Remove hover transforms on touch screens — they stick */
+  .mod:hover,
+  .testi:hover,
+  .why-item:hover,
+  .who-card:hover,
+  .fee-card:hover,
+  .gi:hover,
+  .pillar:hover,
+  .ct-item:hover {
+    transform: none;
+    box-shadow: var(--shadow);
+    border-color: var(--border);
+  }
+
+  .mod:hover::after {
+    opacity: 0
+  }
+
+  .btn-primary:hover,
+  .cf-submit:hover {
+    transform: none
+  }
+
+  .btn-wa:hover {
+    transform: none
+  }
+}
+
+/* ── LANDSCAPE PHONE FIX ────────────────────────── */
+@media (max-width:767px) and (orientation:landscape) {
+  .hero {
+    min-height: auto;
+    padding: 75px 0 35px
+  }
+
+  .hero-title {
+    font-size: clamp(1.6rem, 5vw, 2.4rem)
+  }
+
+  .hero-cards {
+    grid-template-columns: repeat(4, 1fr)
+  }
+
+  .hcard {
+    padding: .9rem .8rem
+  }
+
+  .hcard-n {
+    font-size: 1.4rem
+  }
+
+  .hcard-l {
+    font-size: .58rem
   }
 }
