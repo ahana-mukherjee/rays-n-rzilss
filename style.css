@@ -1872,13 +1872,6 @@ select {
   border-top: 1px solid var(--border);
 }
 
-display:flex;
-flex-direction:column;
-gap:.75rem;
-margin-top:1.5rem;
-width:100%;
-}
-
 .faq-btn {
   width: 100%;
   justify-content: center;

@@ -2,7 +2,7 @@
 'use strict';
 
 /* ── THEME ─────────────────────────────────────── */
-const html   = document.documentElement;
+const html = document.documentElement;
 const toggle = document.getElementById('themeToggle');
 html.setAttribute('data-theme', localStorage.getItem('rr-theme') || 'light');
 toggle.addEventListener('click', () => {
@@ -12,8 +12,8 @@ toggle.addEventListener('click', () => {
 });
 
 /* ── NAVBAR ────────────────────────────────────── */
-const navbar   = document.getElementById('navbar');
-const burger   = document.getElementById('hamburger');
+const navbar = document.getElementById('navbar');
+const burger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
 
 window.addEventListener('scroll', () => {
@@ -91,10 +91,10 @@ const tlObs = new IntersectionObserver(entries => {
     if (entry.isIntersecting) {
       entry.target.querySelectorAll('.tl-dot:not(.tl-dot--final)').forEach((dot, i) => {
         setTimeout(() => {
-          dot.style.background  = 'var(--brand-blue-2)';
+          dot.style.background = 'var(--brand-blue-2)';
           dot.style.borderColor = 'var(--brand-blue-2)';
-          dot.style.boxShadow   = '0 0 0 4px rgba(38,66,181,.22)';
-          dot.style.transition  = 'all 0.4s ease';
+          dot.style.boxShadow = '0 0 0 4px rgba(38,66,181,.22)';
+          dot.style.transition = 'all 0.4s ease';
         }, i * 280);
       });
       tlObs.unobserve(entry.target);
@@ -107,27 +107,61 @@ document.querySelectorAll('.timeline-wrap').forEach(el => tlObs.observe(el));
 document.querySelectorAll('.mod').forEach(card => {
   card.addEventListener('mousemove', e => {
     const r = card.getBoundingClientRect();
-    const dx = (e.clientX - r.left - r.width / 2)  / (r.width / 2);
-    const dy = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
+    const dx = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+    const dy = (e.clientY - r.top - r.height / 2) / (r.height / 2);
     card.style.transform = `translateY(-5px) rotateX(${-dy * 4}deg) rotateY(${dx * 4}deg)`;
   });
   card.addEventListener('mouseleave', () => { card.style.transform = ''; });
 });
 
 /* ── CONTACT FORM ──────────────────────────────── */
-const form  = document.getElementById('contactForm');
+const form = document.getElementById('contactForm');
 const toast = document.getElementById('toast');
-form.addEventListener('submit', e => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const btn  = form.querySelector('.cf-submit');
+  const btn = form.querySelector('.cf-submit');
   const orig = btn.textContent;
   btn.textContent = 'Sending…';
   btn.disabled = true;
-  setTimeout(() => {
-    btn.textContent = orig;
-    btn.disabled = false;
-    form.reset();
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3800);
-  }, 1400);
+
+  const formData = new FormData(form);
+  const name = formData.get('name');
+  const phone = formData.get('phone');
+  const email = formData.get('email') || 'Not provided';
+  const track = formData.get('track');
+  const qualification = formData.get('qualification') || 'Not provided';
+  const message = formData.get('message') || 'No message';
+
+  try {
+    const response = await fetch("https://api.web3forms.com/submit", {
+      method: "POST",
+      body: formData
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      form.reset();
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3800);
+
+      // WhatsApp Redirect
+      const ownerPhone = "919073542257";
+      const text = `Hello RAYS & RZILSS, I have submitted an enquiry:\n\n` +
+                   `• *Name:* ${name}\n` +
+                   `• *Phone:* ${phone}\n` +
+                   `• *Email:* ${email}\n` +
+                   `• *Track:* ${track}\n` +
+                   `• *Qualification:* ${qualification}\n` +
+                   `• *Message:* ${message}`;
+
+      const waUrl = `https://wa.me/${ownerPhone}?text=${encodeURIComponent(text)}`;
+      window.open(waUrl, '_blank');
+    }
+
+  } catch (error) {
+    alert("Failed to send enquiry. Please try again or contact us directly.");
+  }
+  btn.textContent = orig;
+  btn.disabled = false;
 });
