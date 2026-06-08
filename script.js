@@ -15,6 +15,20 @@ toggle.addEventListener('click', () => {
 const navbar = document.getElementById('navbar');
 const burger = document.getElementById('hamburger');
 const navLinks = document.getElementById('navLinks');
+const navClose = document.getElementById('navClose');
+
+function closeMenu() {
+  navLinks.classList.remove('open');
+  burger.querySelectorAll('span').forEach(x => { x.style.transform = ''; x.style.opacity = ''; });
+}
+
+function openMenu() {
+  navLinks.classList.add('open');
+  const s = burger.querySelectorAll('span');
+  s[0].style.transform = 'translateY(7px) rotate(45deg)';
+  s[1].style.opacity = '0';
+  s[2].style.transform = 'translateY(-7px) rotate(-45deg)';
+}
 
 window.addEventListener('scroll', () => {
   navbar.classList.toggle('scrolled', window.scrollY > 60);
@@ -22,22 +36,16 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 burger.addEventListener('click', () => {
-  const open = navLinks.classList.toggle('open');
-  const s = burger.querySelectorAll('span');
-  if (open) {
-    s[0].style.transform = 'translateY(7px) rotate(45deg)';
-    s[1].style.opacity = '0';
-    s[2].style.transform = 'translateY(-7px) rotate(-45deg)';
-  } else {
-    s.forEach(x => { x.style.transform = ''; x.style.opacity = ''; });
-  }
+  const isOpen = navLinks.classList.contains('open');
+  if (isOpen) { closeMenu(); } else { openMenu(); }
 });
 
+if (navClose) {
+  navClose.addEventListener('click', closeMenu);
+}
+
 navLinks.querySelectorAll('.nav-link').forEach(l =>
-  l.addEventListener('click', () => {
-    navLinks.classList.remove('open');
-    burger.querySelectorAll('span').forEach(x => { x.style.transform = ''; x.style.opacity = ''; });
-  })
+  l.addEventListener('click', closeMenu)
 );
 
 function updateActive() {

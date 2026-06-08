@@ -447,6 +447,10 @@ select {
   background: var(--bg);
 }
 
+.nav-close {
+  display: none
+}
+
 .hero-shapes {
   position: absolute;
   inset: 0;
@@ -2304,19 +2308,31 @@ a.ct-item:hover {
   .nav-links {
     display: none;
     position: fixed;
-    inset: 0;
-    background: var(--bg);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: var(--bg-2);
     flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 2rem;
-    z-index: 999;
+    z-index: 1100;
     font-size: 1.1rem;
-    padding: 2rem;
+    padding: 5rem 2rem 2rem;
+    overflow-y: auto;
   }
 
   .nav-links.open {
-    display: flex
+    display: flex;
+    animation: menuFadeIn 0.22s ease forwards;
+  }
+
+  @keyframes menuFadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
   .nav-link {
@@ -2326,7 +2342,32 @@ a.ct-item:hover {
 
   .hamburger {
     display: flex;
-    z-index: 1000
+    z-index: 1200
+  }
+
+  .nav-close {
+    display: flex;
+    position: fixed;
+    top: 1rem;
+    right: 1.2rem;
+    background: none;
+    border: 1.5px solid var(--border);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: var(--text);
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    z-index: 1201;
+    transition: background var(--tr), border-color var(--tr);
+  }
+
+  .nav-close:hover {
+    background: var(--surf-2);
+    border-color: var(--brand-blue-2);
   }
 
   .nav-cta {
